@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.jwt.JwtMybatisApplication.repository.SubjectRepository" >
+
+    <resultMap id="SubjectResultMap" type="com.demo.jwt.JwtMybatisApplication.model.SubjectEntity">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <association property="teacher" resultMap="com.demo.jwt.JwtMybatisApplication.repository.TeacherRepository.TeacherResultMap" />
+    </resultMap>
+
+    <select id="findSubjectById" resultMap="SubjectResultMap" parameterType="long">
+        SELECT id, name
+        FROM subject WHERE id = #{id}
+    </select>
+
+    <!-- Get All Subjects -->
+    <select id="findAll" resultMap="SubjectResultMap" resultType="com.demo.jwt.JwtMybatisApplication.model.SubjectEntity">
+        SELECT * FROM subject
+    </select>
+
+    <!-- Insert Subject -->
+    <insert id="saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        <foreach collection="list" item="subject" separator=";">
+            INSERT INTO subject (name, teacher_id)
+            VALUES (#{subject.name}, #{subject.teacher.id})
+        </foreach>
+    </insert>
+
+</mapper>

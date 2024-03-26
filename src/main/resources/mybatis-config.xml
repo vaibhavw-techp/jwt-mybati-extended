@@ -1,0 +1,19 @@
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- Define Type Aliases -->
+    <typeAliases>
+        <typeAlias alias="StudentEntity" type="com.demo.MybatisApplication.model.StudentEntity"/>
+        <typeAlias alias="SubjectEntity" type="com.demo.MybatisApplication.model.SubjectEntity"/>
+        <typeAlias alias="TeacherEntity" type="com.demo.MybatisApplication.model.TeacherEntity"/>
+    </typeAliases>
+
+    <mappers>
+        <!-- Example: -->
+         <mapper resource="mapper/StudentMapper.xml"/>
+         <mapper resource="mapper/SubjectMapper.xml"/>
+         <mapper resource="mapper/TeacherMapper.xml"/>
+    </mappers>
+
+</configuration>

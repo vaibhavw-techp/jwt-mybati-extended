@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.jwt.JwtMybatisApplication.repository.TeacherRepository">
+
+    <resultMap id="TeacherResultMap" type="com.demo.jwt.JwtMybatisApplication.model.TeacherEntity">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="age" column="age"/>
+        <result property="email" column="email"/>
+
+        <collection property="subjects" column="id" resultMap="com.demo.jwt.JwtMybatisApplication.repository.SubjectRepository.SubjectResultMap" ofType="com.demo.jwt.JwtMybatisApplication.model.SubjectEntity"/>
+    </resultMap>
+
+    <!--    Insert Teacher-->
+    <insert id="save" parameterType="com.demo.jwt.JwtMybatisApplication.model.TeacherEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO teacher (name, age, email)
+        VALUES (#{name}, #{age}, #{email})
+    </insert>
+
+    <!-- Get all teachers -->
+    <select id="findAll" resultMap="TeacherResultMap" resultType="com.demo.jwt.JwtMybatisApplication.model.TeacherEntity">
+        SELECT * FROM teacher
+    </select>
+
+    <!-- Get teacher by ID -->
+    <select id="findTeacherById" resultMap="TeacherResultMap" parameterType="Long">
+        SELECT * FROM teacher WHERE id = #{id}
+    </select>
+
+    <select id="findAllByTeacher" resultMap="com.demo.jwt.JwtMybatisApplication.repository.SubjectRepository.SubjectResultMap">
+        SELECT s.id, s.name, t.id, t.name, t.age, t.email
+        FROM subject s
+        INNER JOIN teacher t ON s.id = t.id
+        WHERE s.id = #{id}
+    </select>
+
+</mapper>

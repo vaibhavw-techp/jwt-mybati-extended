@@ -1,0 +1,18 @@
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <typeAliases>
+        <typeAlias alias="MessEntity" type="com.demo.MybatisApplication.model.mgmodel.MessEntity"/>
+        <typeAlias alias="MessOwnerEntity" type="com.demo.MybatisApplication.model.mgmodel.MessOwnerEntity"/>
+        <typeAlias alias="HostelEntity" type="com.demo.MybatisApplication.model.mgmodel.HostelEntity"/>
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper2/MessMapper.xml"/>
+        <mapper resource="mapper2/MessOwnerMapper.xml"/>
+        <mapper resource="mapper2/HostelMapper.xml"/>
+    </mappers>
+
+</configuration>

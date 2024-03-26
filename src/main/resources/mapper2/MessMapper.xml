@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.jwt.JwtMybatisApplication.repository.mgrepository.MessRepository">
+
+    <resultMap id="MessResultMap" type="com.demo.jwt.JwtMybatisApplication.model.mgmodel.MessEntity">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="capacity" column="capacity" />
+        <result property="location" column="location" />
+    </resultMap>
+
+    <insert id="save" parameterType="com.demo.jwt.JwtMybatisApplication.model.mgmodel.MessEntity" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO Mess (name, capacity, location)
+        VALUES (#{name}, #{capacity}, #{location})
+    </insert>
+
+    <select id="findAll" resultMap="MessResultMap">
+       SELECT * from Mess
+    </select>
+
+    <select id="findMessById" resultMap="MessResultMap" parameterType="long">
+        Select * from Mess where id = #{id}
+    </select>
+
+</mapper>

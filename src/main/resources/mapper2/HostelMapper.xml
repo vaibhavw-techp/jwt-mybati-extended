@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.jwt.JwtMybatisApplication.repository.mgrepository.HostelRepository">
+
+    <resultMap id="HostelResultMap" type="com.demo.jwt.JwtMybatisApplication.model.mgmodel.HostelEntity">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+        <result property="capacity" column="capacity" />
+        <result property="numRooms" column="num_rooms" />
+    </resultMap>
+
+    <insert id="save" parameterType="com.demo.jwt.JwtMybatisApplication.model.mgmodel.HostelEntity" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO Hostel (name, address, capacity, num_rooms)
+        VALUES (#{name}, #{address}, #{capacity}, #{numRooms})
+    </insert>
+
+    <select id="findAll" resultMap="HostelResultMap">
+       SELECT * from Hostel
+    </select>
+
+</mapper>
