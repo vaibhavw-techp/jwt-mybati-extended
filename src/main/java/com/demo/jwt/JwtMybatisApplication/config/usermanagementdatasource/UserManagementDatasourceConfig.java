@@ -20,7 +20,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 public class UserManagementDatasourceConfig {
 
     @Bean(name = "dataSource3")
-    @Primary
     @ConfigurationProperties(prefix = "spring.user-management")
     public org.apache.tomcat.jdbc.pool.DataSource dataSource3() {
         DataSource dataSource = new DataSource();
@@ -33,7 +32,6 @@ public class UserManagementDatasourceConfig {
     }
 
     @Bean(name = "sqlSessionFactory3")
-    @Primary
     public SqlSessionFactory sqlSessionFactory3(@Qualifier("dataSource3") final DataSource dataSource3) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource3);
@@ -42,13 +40,11 @@ public class UserManagementDatasourceConfig {
     }
 
     @Bean(name = "sqlSessionTemplate3")
-    @Primary
     public SqlSessionTemplate sqlSessionTemplate3(@Qualifier("sqlSessionFactory3") final SqlSessionFactory sqlSessionFactory3) {
         return new SqlSessionTemplate(sqlSessionFactory3);
     }
 
     @Bean
-    @Primary
     @ConfigurationProperties("spring.user-management")
     public DataSourceProperties thirdDataSourceProperties() {
         return new DataSourceProperties();

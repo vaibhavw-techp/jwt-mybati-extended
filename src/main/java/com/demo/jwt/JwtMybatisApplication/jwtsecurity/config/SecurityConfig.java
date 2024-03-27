@@ -1,7 +1,6 @@
 package com.demo.jwt.JwtMybatisApplication.jwtsecurity.config;
 
 
-
 import com.demo.jwt.JwtMybatisApplication.jwtsecurity.security.JwtAuthenticationEntryPoint;
 import com.demo.jwt.JwtMybatisApplication.jwtsecurity.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,8 @@ public class SecurityConfig {
                 .requestMatchers("/students").hasRole("STUDENT")
                 .requestMatchers("/teachers").hasRole("TEACHER")
                 .requestMatchers("/subjects").hasAnyRole("TEACHER", "STUDENT", "ADMIN")
+                .requestMatchers("/hostels").hasRole("ADMIN")
+                .requestMatchers("/mess").hasRole("MESS_OWNER")
                 .anyRequest().authenticated().and()
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
