@@ -37,7 +37,7 @@ public class UserManagementDatasourceConfig {
     public SqlSessionFactory sqlSessionFactory3(@Qualifier("dataSource3") final DataSource dataSource3) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource3);
-        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:user-mapper/*.xml"));
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:usermapper/*.xml"));
         return factoryBean.getObject();
     }
 
