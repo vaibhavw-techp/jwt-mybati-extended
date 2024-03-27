@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -43,11 +43,6 @@ public class SecurityConfig {
 
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests()
-                .requestMatchers("/students").hasRole("STUDENT")
-                .requestMatchers("/teachers").hasRole("TEACHER")
-                .requestMatchers("/subjects").hasAnyRole("TEACHER", "STUDENT", "ADMIN")
-                .requestMatchers("/hostels").hasRole("ADMIN")
-                .requestMatchers("/mess").hasRole("MESS_OWNER")
                 .anyRequest().authenticated().and()
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
