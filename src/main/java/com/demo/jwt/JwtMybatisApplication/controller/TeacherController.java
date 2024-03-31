@@ -7,8 +7,8 @@ import com.demo.jwt.JwtMybatisApplication.dto.TeacherDisplayInfoDto;
 import com.demo.jwt.JwtMybatisApplication.dto.TeacherSubjectDisplayDto;
 import com.demo.jwt.JwtMybatisApplication.model.TeacherEntity;
 import com.demo.jwt.JwtMybatisApplication.service.TeacherService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,26 +26,26 @@ public class TeacherController {
     TeacherService teacherService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RolesAllowed("ADMIN")
     public TeacherEntity addTeacher(@RequestBody TeacherAdditionDto teacherAdditionDto){
         return teacherService.addTeacher(teacherAdditionDto);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
+    @RolesAllowed({"ADMIN","TEACHER"})
     public TeacherDisplayDto getTeacherById(@PathVariable long id){
         return teacherService.getTeacherById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
+    @RolesAllowed({"ADMIN","TEACHER"})
     public List<TeacherDisplayInfoDto> getAllTeachers(){
         return teacherService.getAllTeachers();
     }
 
     @GetMapping("/{teacherId}/subject")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
+    @RolesAllowed({"ADMIN","TEACHER"})
     public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long teacherId) {
-       return teacherService.getTeacherWithSubjectsById(teacherId);
+        return teacherService.getTeacherWithSubjectsById(teacherId);
     }
 }
