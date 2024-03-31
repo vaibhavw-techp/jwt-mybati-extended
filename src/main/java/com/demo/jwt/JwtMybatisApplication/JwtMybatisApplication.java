@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
 @MapperScan({"com.demo.jwt.JwtMybatisApplication.repository","com.demo.jwt.JwtMybatisApplication.repository.mgrepository",
 		"com.demo.jwt.JwtMybatisApplication.jwtsecurity.repository"})
