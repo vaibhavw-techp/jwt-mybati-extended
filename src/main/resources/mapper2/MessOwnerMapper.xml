@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.demo.jwt.JwtMybatisApplication.repository.mgrepository.MessOwnerRepository">
+<mapper namespace="com.demo.jwt.jwtmybatisapplication.repository.mgrepository.MessOwnerRepository">
 
-    <resultMap id="MessOwnerResultMap" type="com.demo.jwt.JwtMybatisApplication.model.mgmodel.MessOwnerEntity">
+    <resultMap id="MessOwnerResultMap" type="com.demo.jwt.jwtmybatisapplication.model.mgmodel.MessOwnerEntity">
         <id property="id" column="id" />
         <result property="name" column="name" />
         <result property="contactNumber" column="contact_number" />
         <result property="messId" column="mess_id" />
     </resultMap>
 
-    <insert id="save" parameterType="com.demo.jwt.JwtMybatisApplication.model.mgmodel.MessOwnerEntity"
+    <insert id="save" parameterType="com.demo.jwt.jwtmybatisapplication.model.mgmodel.MessOwnerEntity"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO mess_owner (name, contact_number, mess_id)
         VALUES (#{name}, #{contactNumber}, #{messId})

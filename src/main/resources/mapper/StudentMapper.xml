@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.demo.jwt.JwtMybatisApplication.repository.StudentRepository">
+<mapper namespace="com.demo.jwt.jwtmybatisapplication.repository.StudentRepository">
 
-    <resultMap id="StudentResultMap" type="com.demo.jwt.JwtMybatisApplication.model.StudentEntity">
+    <resultMap id="StudentResultMap" type="com.demo.jwt.jwtmybatisapplication.model.StudentEntity">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="email" column="email"/>
         <result property="age" column="age"/>
 
-        <collection property="subjects" column="id" ofType="com.demo.jwt.JwtMybatisApplication.model.SubjectEntity" select="findSubjectsByStudentId">
+        <collection property="subjects" column="id" ofType="com.demo.jwt.jwtmybatisapplication.model.SubjectEntity" select="findSubjectsByStudentId">
         </collection>
     </resultMap>
 
     <!-- Insert student -->
-    <insert id="save" parameterType="com.demo.jwt.JwtMybatisApplication.model.StudentEntity" useGeneratedKeys="true" keyProperty="id"
-    keyColumn="id">
+    <insert id="save" parameterType="com.demo.jwt.jwtmybatisapplication.model.StudentEntity" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
         INSERT INTO student ( name, email, age)
         VALUES (#{name}, #{email}, #{age})
     </insert>
@@ -52,7 +52,7 @@
 <!--    </select>-->
 
     <!-- Get subjects by student ID-->
-    <select id="findSubjectsByStudentId" parameterType="long" resultMap="com.demo.jwt.JwtMybatisApplication.repository.SubjectRepository.SubjectResultMap">
+    <select id="findSubjectsByStudentId" parameterType="long" resultMap="com.demo.jwt.jwtmybatisapplication.repository.SubjectRepository.SubjectResultMap">
         SELECT sb.id, sb.name AS name
         FROM subject sb
         INNER JOIN student_subject ss ON sb.id = ss.subject_id

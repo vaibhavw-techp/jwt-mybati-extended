@@ -12,4 +12,6 @@
     <suppress checks="NewlineAtEndOfFile" files="src[/\\]test[/\\]resources[/\\].*"/>
     <suppress checks="LineLength" files="src[/\\]test[/\\]resources[/\\].*"/>
     <suppress checks="LineLength" files="src[/\\]main[/\\]resources[/\\].*"/>
+    <suppress checks="tabWidth" files="src[/\\]main[/\\]resources[/\\].*"/>
+    <suppress checks="FileTabCharacter" files="src[/\\]main[/\\]resources[/\\].*"/>
 </suppressions>
