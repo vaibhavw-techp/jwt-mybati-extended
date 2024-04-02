@@ -1,32 +1,29 @@
 package com.demo.jwt.JwtMybatisApplication.jwtsecurity.config;
 
 
-import com.demo.jwt.JwtMybatisApplication.jwtsecurity.security.JwtAuthenticationEntryPoint;
-import com.demo.jwt.JwtMybatisApplication.jwtsecurity.security.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+
+import javax.crypto.SecretKey;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Value("${jwt.secret}")
+    private String Secret_Key;
 
     private static final String[] AUTH_WHITE_LIST = {
             "/v3/api-docs/**",
@@ -36,26 +33,32 @@ public class SecurityConfig {
     };
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.authorizeHttpRequests(authorize ->
+                authorize
+                    .requestMatchers(AUTH_WHITE_LIST).permitAll()
+                    .requestMatchers("/write/**").hasAuthority("SCOPE_write")
+                    .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(configure -> configure.jwt(Customizer.withDefaults()))
+            .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-        return builder.getAuthenticationManager();
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withSecretKey(Secret_Key).build();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        final JwtGrantedAuthoritiesConverter gac = new JwtGrantedAuthoritiesConverter();
+        gac.setAuthoritiesClaimName("Role");
+        gac.setAuthorityPrefix("ROLE_");
 
-        httpSecurity.csrf(csrf -> csrf.disable())
-                .authorizeRequests()
-                .requestMatchers(AUTH_WHITE_LIST).permitAll()
-                .anyRequest().authenticated().and()
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return httpSecurity.build();
+        final JwtAuthenticationConverter jac = new JwtAuthenticationConverter();
+        jac.setJwtGrantedAuthoritiesConverter(gac); // Set JwtGrantedAuthoritiesConverter instance
+        return jac;
     }
+
 
 }
