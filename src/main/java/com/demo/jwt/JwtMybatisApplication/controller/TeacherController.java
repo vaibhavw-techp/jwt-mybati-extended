@@ -26,25 +26,25 @@ public class TeacherController {
     TeacherService teacherService;
 
     @PostMapping
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     public TeacherEntity addTeacher(@RequestBody TeacherAdditionDto teacherAdditionDto){
         return teacherService.addTeacher(teacherAdditionDto);
     }
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ADMIN","TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
     public TeacherDisplayDto getTeacherById(@PathVariable long id){
         return teacherService.getTeacherById(id);
     }
 
     @GetMapping
-    @RolesAllowed({"ADMIN","TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
     public List<TeacherDisplayInfoDto> getAllTeachers(){
         return teacherService.getAllTeachers();
     }
 
     @GetMapping("/{teacherId}/subject")
-    @RolesAllowed({"ADMIN","TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
     public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long teacherId) {
         return teacherService.getTeacherWithSubjectsById(teacherId);
     }

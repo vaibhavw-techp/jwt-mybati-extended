@@ -19,19 +19,19 @@ public class MessController {
     private MessService messService;
 
     @PostMapping
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     public ResponseEntity<MessDisplayDto> createMess(@RequestBody MessAdditionDto mess) {
         return ResponseEntity.ok().body(messService.createMess(mess));
     }
 
     @GetMapping
-    @RolesAllowed({"ADMIN", "MESS_OWNER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_MESS_OWNER"})
     public ResponseEntity<List<MessDisplayDto>> getAllMess() {
         return ResponseEntity.ok().body(messService.getAllMess());
     }
 
     @GetMapping("{messId}/owners")
-    @RolesAllowed({"ADMIN", "MESS_OWNER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_MESS_OWNER"})
     public ResponseEntity<MessOwnerDisplayInfoDto> getOwnerByMessId(@PathVariable Long messId){
         MessOwnerDisplayInfoDto messOwner = messService.getOwnerByMessId(messId);
         return ResponseEntity.ok().body(messOwner);

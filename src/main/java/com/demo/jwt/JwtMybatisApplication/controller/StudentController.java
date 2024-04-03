@@ -21,33 +21,33 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ADMIN", "STUDENT"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
     public StudentDisplayByIdDto getStudentById(@PathVariable Long id){
         return studentService.getStudentById(id);
     }
 
     @PostMapping("/{studentId}/subjects")
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     public void assignSubjectsToStudent(@PathVariable Long studentId, @RequestBody List<SubjectEntity> subjects) {
         studentService.assignSubjectsToStudent(studentId, subjects);
     }
 
     // Add student
     @PostMapping
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     public StudentDisplayByIdDto addStudent(@RequestBody StudentAddDto student){
         return studentService.addStudent(student);
     }
 
     @GetMapping("/{studentId}/subjects")
-    @RolesAllowed({"ADMIN", "STUDENT"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
     public StudentDisplayAsSubjects getStudentWithSubjects(@PathVariable Long studentId) {
         return studentService.getStudentWithSubjects(studentId);
     }
 
     // Filter + ALL
     @GetMapping
-    @RolesAllowed({"ADMIN", "STUDENT"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
     public List<StudentsDisplayDto> getAllStudents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer age,

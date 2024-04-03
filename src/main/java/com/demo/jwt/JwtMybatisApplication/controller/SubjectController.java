@@ -17,18 +17,18 @@ public class SubjectController {
     SubjectService subjectService;
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ADMIN", "STUDENT", "TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT", "ROLE_TEACHER"})
     public SubjectEntityDisplayDto getSubjectById(@PathVariable Long id){
         return subjectService.getSubjectById(id);
     }
     @GetMapping
-    @RolesAllowed({"ADMIN", "STUDENT", "TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT", "ROLE_TEACHER"})
     public List<SubjectDisplayDto> getSubjects(){
         return subjectService.getSubjects();
     }
 
     @PostMapping
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     public List<SubjectDisplayDto> addSubjects(@RequestBody List<SubjectAdditionDto> subjects){
         return subjectService.addSubjects(subjects);
     }
