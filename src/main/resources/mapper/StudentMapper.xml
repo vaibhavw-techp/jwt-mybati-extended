@@ -29,6 +29,18 @@
         </foreach>
     </insert>
 
+    <insert id="updateSubjectsToStudent" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LASTVAL() AS id
+        </selectKey>
+        INSERT INTO student_subject (student_id, subject_id)
+        VALUES
+        <foreach collection="subjectIds" item="subjectId" separator=",">
+            (#{studentId}, #{subjectId})
+        </foreach>
+
+    </insert>
+
     <!-- Get student by ID -->
     <select id="findStudentById" resultMap="StudentResultMap" parameterType="long">
         SELECT id, name, email, age
@@ -45,18 +57,16 @@
         WHERE s.id = #{id}
     </select>
 
-<!--    &lt;!&ndash; Get all students &ndash;&gt;-->
-<!--    <select id="findAll" resultMap="StudentResultMap" >-->
-<!--        SELECT id, name, email, age FROM student-->
-<!--&lt;!&ndash;        SELECT id, subject_id,student_id from student_subject;&ndash;&gt;-->
-<!--    </select>-->
-
     <!-- Get subjects by student ID-->
     <select id="findSubjectsByStudentId" parameterType="long" resultMap="com.demo.jwt.JwtMybatisApplication.repository.SubjectRepository.SubjectResultMap">
         SELECT sb.id, sb.name AS name
         FROM subject sb
         INNER JOIN student_subject ss ON sb.id = ss.subject_id
         WHERE ss.student_id = #{id}
+    </select>
+
+    <select id="findAllStudents" resultMap="StudentResultMap">
+        SELECT * from student
     </select>
 
     <select id="findAll" parameterType="map" resultMap="StudentResultMap">
