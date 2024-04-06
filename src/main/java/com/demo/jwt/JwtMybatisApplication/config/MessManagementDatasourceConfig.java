@@ -13,11 +13,14 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.apache.tomcat.jdbc.pool.DataSource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @MapperScan(value = "com.demo.jwt.JwtMybatisApplication",
         annotationClass= MessManagementSQLConnMapper.class,
         sqlSessionFactoryRef="sqlSessionFactory2")
 @Configuration
+@EnableTransactionManagement
 public class MessManagementDatasourceConfig {
 
     @Bean(name = "dataSource2")
@@ -54,4 +57,10 @@ public class MessManagementDatasourceConfig {
     public DataSourceProperties secondDataSourceProperties() {
         return new DataSourceProperties();
     }
+
+    @Bean(name = "messManagement")
+    public DataSourceTransactionManager schoolDatabaseTransactionManager() {
+        return new DataSourceTransactionManager(dataSource2());
+    }
+
 }

@@ -11,11 +11,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @MapperScan(value = "com.demo.jwt.JwtMybatisApplication",
         annotationClass= SchoolManagementSQLConnMapper.class,
         sqlSessionFactoryRef="sqlSessionFactory1")
 @Configuration
+@EnableTransactionManagement
 public class SchoolDatasourceConfig {
 
     @Bean(name = "dataSource1")
@@ -52,4 +55,10 @@ public class SchoolDatasourceConfig {
     public DataSourceProperties firstDataSourceProperties() {
         return new DataSourceProperties();
     }
+
+    @Bean(name = "schoolManagement")
+    public DataSourceTransactionManager schoolDatabaseTransactionManager() {
+        return new DataSourceTransactionManager(dataSource1());
+    }
+
 }
