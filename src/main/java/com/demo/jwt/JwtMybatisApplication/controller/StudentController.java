@@ -1,9 +1,8 @@
 package com.demo.jwt.JwtMybatisApplication.controller;
 
-import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayAsSubjects;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayByIdDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentsDisplayDto;
+import com.demo.jwt.JwtMybatisApplication.dto.*;
+import com.demo.jwt.JwtMybatisApplication.exceptions.DuplicateResourceException;
+import com.demo.jwt.JwtMybatisApplication.exceptions.ResourceNotFoundException;
 import com.demo.jwt.JwtMybatisApplication.model.SubjectEntity;
 import com.demo.jwt.JwtMybatisApplication.service.StudentService;
 import jakarta.annotation.security.RolesAllowed;
@@ -22,15 +21,15 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
-    public StudentDisplayByIdDto getStudentById(@PathVariable Long id){
+    public StudentDisplayByIdDto getStudentById(@PathVariable Long id) throws ResourceNotFoundException {
         return studentService.getStudentById(id);
     }
 
-    @PostMapping("/{studentId}/subjects")
-    @RolesAllowed("ROLE_ADMIN")
-    public void assignSubjectsToStudent(@PathVariable Long studentId, @RequestBody List<SubjectEntity> subjects) {
-        studentService.assignSubjectsToStudent(studentId, subjects);
-    }
+//    @PostMapping("/{studentId}/subjects")
+//    @RolesAllowed("ROLE_ADMIN")
+//    public void assignSubjectsToStudent(@PathVariable Long studentId, @RequestBody List<Long> subjects) {
+//        studentService.assignSubjectsToStudent(studentId, subjects);
+//    }
 
     // Add student
     @PostMapping
@@ -48,12 +47,19 @@ public class StudentController {
     // Filter + ALL
     @GetMapping
     @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
-    public List<StudentsDisplayDto> getAllStudents(
+    public List<StudentDisplayDto> getAllStudents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer age,
             @RequestParam(required = false) String email) {
 
-        List<StudentsDisplayDto> studentsDisplayDtos = studentService.getAllStudentsWithFilters(name, age, email);
+        List<StudentDisplayDto> studentsDisplayDtos = studentService.getAllStudentsWithFilters(name, age, email);
         return studentsDisplayDtos;
     }
+
+    @PostMapping("/assign")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
+    public List<StudentDisplayAsSubjects> assignSubjectsToStudent(@RequestBody SubjectAssignDto subjectAssignDto) throws ResourceNotFoundException, DuplicateResourceException {
+        return studentService.assignSubjectSToStudentsByName(subjectAssignDto);
+    }
+
 }
