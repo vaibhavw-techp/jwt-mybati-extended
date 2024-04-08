@@ -25,12 +25,6 @@ public class StudentController {
         return studentService.getStudentById(id);
     }
 
-//    @PostMapping("/{studentId}/subjects")
-//    @RolesAllowed("ROLE_ADMIN")
-//    public void assignSubjectsToStudent(@PathVariable Long studentId, @RequestBody List<Long> subjects) {
-//        studentService.assignSubjectsToStudent(studentId, subjects);
-//    }
-
     // Add student
     @PostMapping
     @RolesAllowed("ROLE_ADMIN")
@@ -56,7 +50,7 @@ public class StudentController {
         return studentsDisplayDtos;
     }
 
-    @PostMapping("/assign")
+    @PostMapping("/subjects")
     @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
     public List<StudentDisplayAsSubjects> assignSubjectsToStudent(@RequestBody SubjectAssignDto subjectAssignDto) throws ResourceNotFoundException, DuplicateResourceException {
         return studentService.assignSubjectSToStudentsByName(subjectAssignDto);
