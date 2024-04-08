@@ -20,13 +20,10 @@
     </select>
 
     <!-- Select subject IDs by subject names -->
-    <select id="findSubjectIdsByNames" parameterType="java.util.List" resultType="long">
+    <select id="findSubjectIdByName" parameterType="String" resultType="long">
         SELECT id
         FROM subject
-        WHERE name IN
-        <foreach item="name" collection="list" open="(" separator="," close=")">
-            #{name}
-        </foreach>
+        WHERE name = #{subjectName}
     </select>
 
     <!-- Insert Subject -->
