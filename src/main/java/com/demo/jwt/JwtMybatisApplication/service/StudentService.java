@@ -39,7 +39,7 @@ public class StudentService {
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
-    public StudentDisplayAsSubjects getStudentWithSubjects(Long studentId) {
+    public StudentDisplaySubjectsDto getStudentWithSubjects(Long studentId) {
         StudentEntity studentEntity = studentRepository.findBySubjects(studentId);
         return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
     }
@@ -70,7 +70,7 @@ public class StudentService {
     }
 
     @Transactional(transactionManager = "schoolManagement", rollbackFor = {DuplicateResourceException.class, ResourceNotFoundException.class})
-    public List<StudentDisplayAsSubjects> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException,
+    public List<StudentDisplaySubjectsDto> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException,
             ResourceNotFoundException {
 
         List<StudentEntity> students = studentRepository.findAllStudents();
@@ -86,7 +86,7 @@ public class StudentService {
             }
         }
 
-        List<StudentDisplayAsSubjects> retStudents = studentMapper.mapStudentEntitiesToStudentDisplayWithSubjects(studentRepository.findAllStudents());
+        List<StudentDisplaySubjectsDto> retStudents = studentMapper.mapStudentEntitiesToStudentDisplayWithSubjects(studentRepository.findAllStudents());
         return retStudents;
     }
 }
