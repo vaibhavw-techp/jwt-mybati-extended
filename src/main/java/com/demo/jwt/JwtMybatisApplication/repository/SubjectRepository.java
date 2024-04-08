@@ -14,7 +14,5 @@ public interface SubjectRepository {
     SubjectEntity findSubjectById(long id);
     List<SubjectEntity> findAll();
     void saveAll(List<SubjectEntity> subjects);
-
-    List<Long> findSubjectIdsByNames(List<String> subjectNames);
-
+    Long findSubjectIdByName(String subjectName);
 }
