@@ -27,7 +27,7 @@ public class StudentService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public StudentDisplayByIdDto getStudentById(Long id) throws ResourceNotFoundException{
+    public StudentDisplayByIdDto getStudentById(Long id) {
         StudentEntity studentEntity = studentRepository.findStudentById(id);
         if(studentEntity == null) throw new ResourceNotFoundException(id, "Student");
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
@@ -53,7 +53,7 @@ public class StudentService {
         return studentMapper.studentEntitiesToDisplayDtos(studentEntities);
     }
 
-    public void assignSubjectToStudent(Long studentId, Long subjectId) throws DuplicateResourceException {
+    public void assignSubjectToStudent(Long studentId, Long subjectId) {
         // Get assigned subject IDs
         List<Long> assignedSubjectIds = studentRepository.findSubjectsByStudentId(studentId)
                 .stream()
@@ -69,9 +69,8 @@ public class StudentService {
         studentRepository.updateSubjectsToStudent(studentId, subjectIds);
     }
 
-    @Transactional(transactionManager = "schoolManagement", rollbackFor = {DuplicateResourceException.class, ResourceNotFoundException.class})
-    public List<StudentDisplaySubjectsDto> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException,
-            ResourceNotFoundException {
+    @Transactional(transactionManager = "schoolManagement")
+    public List<StudentDisplaySubjectsDto> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) {
 
         List<StudentEntity> students = studentRepository.findAllStudents();
 
