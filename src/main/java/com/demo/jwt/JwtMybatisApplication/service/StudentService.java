@@ -53,47 +53,36 @@ public class StudentService {
         return studentMapper.studentEntitiesToDisplayDtos(studentEntities);
     }
 
-    public void assignSubjectsToStudent(Long studentId, List<Long> subjectIds) throws ResourceNotFoundException,
-            DuplicateResourceException {
-
+    public void assignSubjectToStudent(Long studentId, Long subjectId) throws DuplicateResourceException {
         // Get assigned subject IDs
         List<Long> assignedSubjectIds = studentRepository.findSubjectsByStudentId(studentId)
                 .stream()
                 .map(SubjectEntity::getId)
                 .collect(Collectors.toList());
 
-        // Check for duplicates subject should not be assigned to
-        if (subjectIds.stream().anyMatch(assignedSubjectIds::contains)) {
+        // Check if the subject is already assigned
+        if (assignedSubjectIds.contains(subjectId)) {
             throw new DuplicateResourceException("Subject");
         }
-        // If all subject IDs exist, update subjects to student
+        List<Long> subjectIds = Collections.singletonList(subjectId);
+        // Update the subject to the student
         studentRepository.updateSubjectsToStudent(studentId, subjectIds);
     }
 
-    public List<StudentDisplayAsSubjects> getAllStudents(){
-        return studentMapper.mapStudentEntitiesToStudentDisplayWithSubjects(studentRepository.findAllStudents());
-    }
-
-    @Transactional(transactionManager = "schoolManagement", rollbackFor = DuplicateResourceException.class)
-    public List<StudentDisplayAsSubjects> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException, ResourceNotFoundException {
-        List<Long> subjectIds;
-
-            subjectIds = subjectRepository.findSubjectIdsByNames(subjectAssignDtos.getSubjects());
-
-            if(subjectIds.isEmpty()) throw new ResourceNotFoundException("Subject");
-
-        // If found duplicate subjectIds
-        if (new HashSet<>(subjectIds).size() != subjectIds.size()) {
-            throw new DuplicateResourceException("Subjects");
-        }
+    @Transactional(transactionManager = "schoolManagement")
+    public List<StudentDisplayAsSubjects> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException {
 
         List<StudentEntity> students = studentRepository.findAllStudents();
 
-        for(StudentEntity student: students) {
-            assignSubjectsToStudent(student.getId(), subjectIds);
+        for(String subject: subjectAssignDtos.getSubjects()) {
+            Long subjectId = subjectRepository.findSubjectIdByName(subject);
+            for(StudentEntity student: students) {
+                assignSubjectToStudent(student.getId(), subjectId);
+            }
         }
 
-        return getAllStudents();
+        List<StudentDisplayAsSubjects> retStudents = studentMapper.mapStudentEntitiesToStudentDisplayWithSubjects(studentRepository.findAllStudents());
+        return retStudents;
     }
 
 }
