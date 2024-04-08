@@ -1,7 +1,7 @@
 package com.demo.jwt.JwtMybatisApplication.mapstruct;
 
 import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayAsSubjects;
+import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplaySubjectsDto;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayByIdDto;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayDto;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
@@ -22,7 +22,7 @@ public interface StudentMapper {
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "subjects", target = "subjects")
-    StudentDisplayAsSubjects studentEntityToDisplayAsSubjects(StudentEntity entity);
+    StudentDisplaySubjectsDto studentEntityToDisplayAsSubjects(StudentEntity entity);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
@@ -32,5 +32,5 @@ public interface StudentMapper {
 
     List<StudentDisplayDto> studentEntitiesToDisplayDtos(List<StudentEntity> entities);
 
-    List<StudentDisplayAsSubjects> mapStudentEntitiesToStudentDisplayWithSubjects(List<StudentEntity> subjects);
+    List<StudentDisplaySubjectsDto> mapStudentEntitiesToStudentDisplayWithSubjects(List<StudentEntity> subjects);
 }
