@@ -3,7 +3,7 @@ package com.demo.jwt.JwtMybatisApplication.exceptions;
 
 import java.util.List;
 
-public class ResourceNotFoundException extends Exception {
+public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(Long id, String resourceName){
         super(resourceName+ " not found with id: "+id);
     }

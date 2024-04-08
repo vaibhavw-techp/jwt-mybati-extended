@@ -21,7 +21,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
-    public StudentDisplayByIdDto getStudentById(@PathVariable Long id) throws ResourceNotFoundException {
+    public StudentDisplayByIdDto getStudentById(@PathVariable Long id) {
         return studentService.getStudentById(id);
     }
 
@@ -52,7 +52,7 @@ public class StudentController {
 
     @PostMapping("/subjects")
     @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT"})
-    public List<StudentDisplaySubjectsDto> assignSubjectsToStudent(@RequestBody SubjectAssignDto subjectAssignDto) throws ResourceNotFoundException, DuplicateResourceException {
+    public List<StudentDisplaySubjectsDto> assignSubjectsToStudent(@RequestBody SubjectAssignDto subjectAssignDto) {
         return studentService.assignSubjectSToStudentsByName(subjectAssignDto);
     }
 
