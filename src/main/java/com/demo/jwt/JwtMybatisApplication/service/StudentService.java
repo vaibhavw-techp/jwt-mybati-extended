@@ -69,13 +69,18 @@ public class StudentService {
         studentRepository.updateSubjectsToStudent(studentId, subjectIds);
     }
 
-    @Transactional(transactionManager = "schoolManagement")
-    public List<StudentDisplayAsSubjects> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException {
+    @Transactional(transactionManager = "schoolManagement", rollbackFor = {DuplicateResourceException.class, ResourceNotFoundException.class})
+    public List<StudentDisplayAsSubjects> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) throws DuplicateResourceException,
+            ResourceNotFoundException {
 
         List<StudentEntity> students = studentRepository.findAllStudents();
 
         for(String subject: subjectAssignDtos.getSubjects()) {
             Long subjectId = subjectRepository.findSubjectIdByName(subject);
+
+            // Checked Exception Handling for Subject Exist and not exists
+            if(subjectId == null) throw new ResourceNotFoundException("Subject");
+
             for(StudentEntity student: students) {
                 assignSubjectToStudent(student.getId(), subjectId);
             }
@@ -84,5 +89,5 @@ public class StudentService {
         List<StudentDisplayAsSubjects> retStudents = studentMapper.mapStudentEntitiesToStudentDisplayWithSubjects(studentRepository.findAllStudents());
         return retStudents;
     }
-
 }
+
