@@ -26,9 +26,6 @@ public class TeacherController {
     @Autowired
     TeacherService teacherService;
 
-    @Autowired
-    private SecurityService securityService;
-
     @PostMapping
     @RolesAllowed("ROLE_ADMIN")
     public TeacherEntity addTeacher(@RequestBody TeacherAdditionDto teacherAdditionDto){
@@ -47,7 +44,7 @@ public class TeacherController {
         return teacherService.getAllTeachers();
     }
 
-    @GetMapping("/{teacherId}/subject")
+    @GetMapping("/{teacherId}/subjects")
     @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
     public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long teacherId, Principal principal) {
         return teacherService.getTeacherWithSubjectsById(teacherId, principal);

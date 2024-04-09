@@ -38,6 +38,10 @@ public class MessService {
     public MessOwnerDisplayInfoDto getOwnerByMessId(Long id) {
         MessEntity messEntity = messRepository.findMessById(id);
         List<MessOwnerEntity> messOwnerEntities = messOwnerRepository.findOwnerByMessId(id);
+
+
+
+
         return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
     }
 

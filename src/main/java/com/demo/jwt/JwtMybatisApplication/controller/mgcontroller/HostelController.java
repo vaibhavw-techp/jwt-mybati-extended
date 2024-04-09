@@ -19,15 +19,15 @@ public class HostelController {
 
     @PostMapping
     @RolesAllowed("ROLE_ADMIN")
-    public ResponseEntity<HostelDisplayDto> createHostel(@RequestBody HostelAdditionDto hostel) {
-        return ResponseEntity.ok().body(hostelService.createHostel(hostel));
+    public HostelDisplayDto createHostel(@RequestBody HostelAdditionDto hostel) {
+        return hostelService.createHostel(hostel);
     }
 
     @GetMapping
     @RolesAllowed({"ROLE_ADMIN", "ROLE_MESS_OWNER"})
-    public ResponseEntity<List<HostelDisplayDto>> getAllHostels() {
+    public List<HostelDisplayDto> getAllHostels() {
         List<HostelDisplayDto> hostels = hostelService.getAllHostels();
-        return ResponseEntity.ok().body(hostels);
+        return hostels;
     }
 
 }
