@@ -24,4 +24,10 @@ public class GlobalExceptionHandler {
         return new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
     }
 
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDetails handleUnauthorizedException(UnauthorizedAccessException ex, WebRequest request) {
+        return new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+    }
+
 }
