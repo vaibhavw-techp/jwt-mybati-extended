@@ -3,7 +3,7 @@ package com.demo.jwt.JwtMybatisApplication.mapstruct;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayAsSubjects;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayByIdDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentsDisplayDto;
+import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayDto;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,5 +29,5 @@ public interface StudentMapper {
     @Mapping(source = "age", target = "age")
     StudentDisplayByIdDto studentEntityToDisplayByIdDto(StudentEntity entity);
 
-    List<StudentsDisplayDto> studentEntitiesToDisplayDtos(List<StudentEntity> entities);
+    List<StudentDisplayDto> studentEntitiesToDisplayDtos(List<StudentEntity> entities);
 }

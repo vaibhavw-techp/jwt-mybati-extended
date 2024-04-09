@@ -17,12 +17,12 @@ public class SubjectController {
     SubjectService subjectService;
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT", "ROLE_TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     public SubjectEntityDisplayDto getSubjectById(@PathVariable Long id){
         return subjectService.getSubjectById(id);
     }
     @GetMapping
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_STUDENT", "ROLE_TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     public List<SubjectDisplayDto> getSubjects(){
         return subjectService.getSubjects();
     }

@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 import javax.crypto.SecretKey;
-
 
 @Configuration
 @EnableWebSecurity
@@ -43,7 +41,7 @@ public class SecurityConfig {
                     .requestMatchers(AUTH_WHITE_LIST).permitAll()
                     .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(configure -> configure.jwt(Customizer.withDefaults()))
+            .oauth2ResourceServer(configure -> configure.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
             .build();
     }
 
@@ -57,6 +55,7 @@ public class SecurityConfig {
         return jac;
     }
 
+
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withSecretKey(stringToSecretKey(secretKey)).macAlgorithm(MacAlgorithm.HS512).build();
@@ -68,6 +67,5 @@ public class SecurityConfig {
                 .build()
                 .toSecretKey();
     }
-
 
 }

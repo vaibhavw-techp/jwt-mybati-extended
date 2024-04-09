@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,6 +26,9 @@ public class TeacherController {
     @Autowired
     TeacherService teacherService;
 
+    @Autowired
+    private SecurityService securityService;
+
     @PostMapping
     @RolesAllowed("ROLE_ADMIN")
     public TeacherEntity addTeacher(@RequestBody TeacherAdditionDto teacherAdditionDto){
@@ -32,20 +36,20 @@ public class TeacherController {
     }
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
-    public TeacherDisplayDto getTeacherById(@PathVariable long id){
-        return teacherService.getTeacherById(id);
+    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
+    public TeacherDisplayDto getTeacherById(@PathVariable long id, Principal principal) {
+       return teacherService.getTeacherById(id, principal);
     }
 
     @GetMapping
-    @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
     public List<TeacherDisplayInfoDto> getAllTeachers(){
         return teacherService.getAllTeachers();
     }
 
     @GetMapping("/{teacherId}/subject")
     @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
-    public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long teacherId) {
-        return teacherService.getTeacherWithSubjectsById(teacherId);
+    public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long teacherId, Principal principal) {
+        return teacherService.getTeacherWithSubjectsById(teacherId, principal);
     }
 }
