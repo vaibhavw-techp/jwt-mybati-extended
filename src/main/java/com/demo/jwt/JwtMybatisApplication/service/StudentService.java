@@ -45,8 +45,8 @@ public class StudentService {
         if (role.equals("ROLE_ADMIN") || role.equals("ROLE_TEACHER")) {
             return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
         } else if (role.equals("ROLE_STUDENT")) {
-            Long teacherIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
-            if (id == teacherIdFromToken) {
+            Long studentIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
+            if (id == studentIdFromToken) {
                 return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
             } else {
                 throw new UnauthorizedAccessException("student");
@@ -76,8 +76,8 @@ public class StudentService {
         if (role.equals("ROLE_ADMIN") || role.equals("ROLE_TEACHER")) {
             return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
         } else if (role.equals("ROLE_STUDENT")) {
-            Long teacherIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
-            if (id == teacherIdFromToken) {
+            Long studentIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
+            if (id == studentIdFromToken) {
                 return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
             } else {
                 throw new UnauthorizedAccessException("student");
