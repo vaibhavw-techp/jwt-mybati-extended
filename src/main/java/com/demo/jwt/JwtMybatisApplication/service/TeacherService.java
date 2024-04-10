@@ -27,9 +27,7 @@ public class TeacherService {
         Jwt jwt = jwtAuthenticationToken.getToken();
         String role = (String) jwt.getClaims().get("Role");
 
-        if (role.equals("ROLE_ADMIN")) {
-            return teacherMapper.teacherEntityToTeacherDisplayDto(teacherRepository.findTeacherById(id));
-        } else if (role.equals("ROLE_TEACHER")) {
+       if (role.equals("ROLE_TEACHER")) {
             Long teacherIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
             if (id == teacherIdFromToken) {
                 return teacherMapper.teacherEntityToTeacherDisplayDto(teacherRepository.findTeacherById(id));
@@ -37,7 +35,7 @@ public class TeacherService {
                 throw new UnauthorizedAccessException("teacher");
             }
         } else {
-            throw new UnauthorizedAccessException();
+           return teacherMapper.teacherEntityToTeacherDisplayDto(teacherRepository.findTeacherById(id));
         }
 
     }
@@ -52,9 +50,7 @@ public class TeacherService {
         Jwt jwt = jwtAuthenticationToken.getToken();
         String role = (String) jwt.getClaims().get("Role");
 
-        if (role.equals("ROLE_ADMIN")) {
-            return teacherMapper.teacherEntityToTeacherSubjectDisplayDto(teacherRepository.findAllByTeacher(id));
-        } else if (role.equals("ROLE_TEACHER")) {
+       if (role.equals("ROLE_TEACHER")) {
             Long teacherIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
             if (id == teacherIdFromToken) {
                 return teacherMapper.teacherEntityToTeacherSubjectDisplayDto(teacherRepository.findAllByTeacher(id));
@@ -62,7 +58,7 @@ public class TeacherService {
                 throw new UnauthorizedAccessException("teacher");
             }
         } else {
-            throw new UnauthorizedAccessException();
+           return teacherMapper.teacherEntityToTeacherSubjectDisplayDto(teacherRepository.findAllByTeacher(id));
         }
     }
 

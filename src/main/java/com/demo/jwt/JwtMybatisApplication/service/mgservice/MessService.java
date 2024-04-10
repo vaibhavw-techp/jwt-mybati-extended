@@ -47,9 +47,7 @@ public class MessService {
         Jwt jwt = jwtAuthenticationToken.getToken();
         String role = (String) jwt.getClaims().get("Role");
 
-        if (role.equals("ROLE_ADMIN")) {
-            return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
-        } else if (role.equals("ROLE_MESS_OWNER")) {
+        if (role.equals("ROLE_MESS_OWNER")) {
             Long messOwnerId = Long.parseLong(jwt.getClaims().get("assc_id").toString());
             if (id == messOwnerId) {
                 return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
@@ -57,7 +55,7 @@ public class MessService {
                 throw new UnauthorizedAccessException("Mess Owner");
             }
         } else {
-            throw new UnauthorizedAccessException();
+            return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.demo.jwt.JwtMybatisApplication.service;
 
 
-
 import com.demo.jwt.JwtMybatisApplication.dto.*;
 import com.demo.jwt.JwtMybatisApplication.exceptions.ResourceNotFoundException;
 import com.demo.jwt.JwtMybatisApplication.exceptions.UnauthorizedAccessException;
@@ -15,12 +14,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 public class StudentService {
@@ -42,9 +39,7 @@ public class StudentService {
         Jwt jwt = jwtAuthenticationToken.getToken();
         String role = (String) jwt.getClaims().get("Role");
 
-        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_TEACHER")) {
-            return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
-        } else if (role.equals("ROLE_STUDENT")) {
+        if (role.equals("ROLE_STUDENT")) {
             Long studentIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
             if (id == studentIdFromToken) {
                 return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
@@ -52,7 +47,7 @@ public class StudentService {
                 throw new UnauthorizedAccessException("student");
             }
         } else {
-            throw new UnauthorizedAccessException();
+            return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
         }
     }
 
@@ -73,9 +68,9 @@ public class StudentService {
         Jwt jwt = jwtAuthenticationToken.getToken();
         String role = (String) jwt.getClaims().get("Role");
 
-        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_TEACHER")) {
-            return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
-        } else if (role.equals("ROLE_STUDENT")) {
+
+
+        if (role.equals("ROLE_STUDENT")) {
             Long studentIdFromToken = Long.parseLong(jwt.getClaims().get("assc_id").toString());
             if (id == studentIdFromToken) {
                 return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
@@ -83,7 +78,7 @@ public class StudentService {
                 throw new UnauthorizedAccessException("student");
             }
         } else {
-            throw new UnauthorizedAccessException();
+            return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
         }
 
     }
