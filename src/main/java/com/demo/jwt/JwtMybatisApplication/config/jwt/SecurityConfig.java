@@ -3,6 +3,7 @@ package com.demo.jwt.JwtMybatisApplication.config.jwt;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-
 import javax.crypto.SecretKey;
 
 @Configuration
@@ -26,6 +25,9 @@ public class SecurityConfig {
 
     @Value("${jwt.secret}")
     private String secretKey;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] AUTH_WHITE_LIST = {
             "/v3/api-docs/**",
@@ -41,7 +43,8 @@ public class SecurityConfig {
                     .requestMatchers(AUTH_WHITE_LIST).permitAll()
                     .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(configure -> configure.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+            .oauth2ResourceServer(configure -> configure.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                    .authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .build();
     }
 
@@ -54,7 +57,6 @@ public class SecurityConfig {
         jac.setJwtGrantedAuthoritiesConverter(gac);
         return jac;
     }
-
 
     @Bean
     public JwtDecoder jwtDecoder() {

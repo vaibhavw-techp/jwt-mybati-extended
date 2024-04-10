@@ -21,7 +21,7 @@ public interface StudentMapper {
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "subjects", target = "subjects")
-    StudentDisplayAsSubjects studentEntityToDisplayAsSubjects(StudentEntity entity);
+    StudentDisplayAsSubjects studentEntityToDisplayAsSubjects(StudentEntity student);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
