@@ -16,6 +16,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         PrintWriter writer = response.getWriter();
-        writer.println("You are not Allowed to Access this Resource: " + accessDeniedException.getMessage());
+        writer.println("You are not allowed to access this resource: " + accessDeniedException.getMessage());
     }
 }

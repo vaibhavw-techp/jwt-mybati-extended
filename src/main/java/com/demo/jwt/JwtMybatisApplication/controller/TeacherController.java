@@ -9,6 +9,7 @@ import com.demo.jwt.JwtMybatisApplication.model.TeacherEntity;
 import com.demo.jwt.JwtMybatisApplication.service.TeacherService;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,26 +28,26 @@ public class TeacherController {
     TeacherService teacherService;
 
     @PostMapping
-    @RolesAllowed("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public TeacherEntity addTeacher(@RequestBody TeacherAdditionDto teacherAdditionDto){
         return teacherService.addTeacher(teacherAdditionDto);
     }
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ROLE_ADMIN, ROLE_TEACHER"})
-    public TeacherDisplayDto getTeacherById(@PathVariable long id, Principal principal) {
-       return teacherService.getTeacherById(id, principal);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and #id == authentication.token.claims['assc_id'])")
+    public TeacherDisplayDto getTeacherById(@PathVariable long id) {
+       return teacherService.getTeacherById(id);
     }
 
     @GetMapping
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_TEACHER"})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<TeacherDisplayInfoDto> getAllTeachers(){
         return teacherService.getAllTeachers();
     }
 
     @GetMapping("/{teacherId}/subjects")
-    @RolesAllowed({"ROLE_ADMIN","ROLE_TEACHER"})
-    public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long teacherId, Principal principal) {
-        return teacherService.getTeacherWithSubjectsById(teacherId, principal);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and #id == authentication.token.claims['assc_id'])")
+    public TeacherSubjectDisplayDto getTeacherBySubjectsById(@PathVariable Long id) {
+        return teacherService.getTeacherWithSubjectsById(id);
     }
 }

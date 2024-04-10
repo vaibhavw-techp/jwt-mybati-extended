@@ -39,24 +39,10 @@ public class MessService {
         return messMapper.mapMessEntitiesToMessDisplayDtos(messRepository.findAll());
     }
 
-    public MessOwnerDisplayInfoDto getOwnerByMessId(Long id, Principal principal) {
+    public MessOwnerDisplayInfoDto getOwnerByMessId(Long id) {
         MessEntity messEntity = messRepository.findMessById(id);
         List<MessOwnerEntity> messOwnerEntities = messOwnerRepository.findOwnerByMessId(id);
-
-        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-        Jwt jwt = jwtAuthenticationToken.getToken();
-        String role = (String) jwt.getClaims().get("Role");
-
-        if (role.equals("ROLE_MESS_OWNER")) {
-            Long messOwnerId = Long.parseLong(jwt.getClaims().get("assc_id").toString());
-            if (id == messOwnerId) {
-                return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
-            } else {
-                throw new UnauthorizedAccessException("Mess Owner");
-            }
-        } else {
-            return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
-        }
+        return messMapper.mapToMessOwnerDisplayInfoDto(messEntity, messOwnerEntities);
     }
 
 }

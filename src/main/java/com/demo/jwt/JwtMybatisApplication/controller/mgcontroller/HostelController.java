@@ -6,6 +6,7 @@ import com.demo.jwt.JwtMybatisApplication.service.mgservice.HostelService;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +19,13 @@ public class HostelController {
     private HostelService hostelService;
 
     @PostMapping
-    @RolesAllowed("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public HostelDisplayDto createHostel(@RequestBody HostelAdditionDto hostel) {
         return hostelService.createHostel(hostel);
     }
 
     @GetMapping
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_MESS_OWNER"})
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MESS_OWNER)")
     public List<HostelDisplayDto> getAllHostels() {
         List<HostelDisplayDto> hostels = hostelService.getAllHostels();
         return hostels;

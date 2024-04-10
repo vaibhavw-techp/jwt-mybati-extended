@@ -26,10 +26,8 @@ public class SecurityConfig {
 
     @Value("${jwt.secret}")
     private String secretKey;
-
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
     @Autowired
     private JwtAccessDeniedHandler accessDeniedHandler;
 

@@ -21,21 +21,21 @@ public class MessController {
     private MessService messService;
 
     @PostMapping
-    @RolesAllowed("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public MessDisplayDto createMess(@RequestBody MessAdditionDto mess) {
         return messService.createMess(mess);
     }
 
     @GetMapping
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_MESS_OWNER"})
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MESS_OWNER')")
     public List<MessDisplayDto> getAllMess() {
         return messService.getAllMess();
     }
 
     @GetMapping("{messId}/owners")
-    @RolesAllowed({"ROLE_ADMIN", "ROLE_MESS_OWNER"})
-    public MessOwnerDisplayInfoDto getOwnerByMessId(@PathVariable Long messId, Principal principal){
-        MessOwnerDisplayInfoDto messOwner = messService.getOwnerByMessId(messId, principal);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_MESS_OWNER') and #messId == authentication.token.claims['assc_id'])")
+    public MessOwnerDisplayInfoDto getOwnerByMessId(@PathVariable Long messId){
+        MessOwnerDisplayInfoDto messOwner = messService.getOwnerByMessId(messId);
         return messOwner;
     }
 
