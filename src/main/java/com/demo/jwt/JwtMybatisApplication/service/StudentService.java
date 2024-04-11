@@ -34,7 +34,7 @@ public class StudentService {
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
-    public StudentDisplayAsSubjects getStudentWithSubjects(Long id) {
+    public StudentDisplaySubjectsDto getStudentWithSubjects(Long id) {
         StudentEntity studentEntity = studentRepository.findBySubjects(id);
         return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
     }

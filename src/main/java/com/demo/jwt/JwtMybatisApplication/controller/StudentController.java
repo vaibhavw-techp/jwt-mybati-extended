@@ -32,7 +32,7 @@ public class StudentController {
 
     @GetMapping("/{studentId}/subjects")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and #studentId == authentication.token.claims['assc_id'])")
-    public StudentDisplayAsSubjects getStudentWithSubjects(@PathVariable Long studentId) {
+    public StudentDisplaySubjectsDto getStudentWithSubjects(@PathVariable Long studentId) {
         return studentService.getStudentWithSubjects(studentId);
     }
 
