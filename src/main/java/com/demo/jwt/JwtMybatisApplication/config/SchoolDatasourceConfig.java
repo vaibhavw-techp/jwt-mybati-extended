@@ -10,15 +10,13 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
 
 @MapperScan(value = "com.demo.jwt.JwtMybatisApplication",
         annotationClass= SchoolManagementSQLConnMapper.class,
         sqlSessionFactoryRef="sqlSessionFactory1")
 @Configuration
-public class MybatisDatasourceConfig {
+public class SchoolDatasourceConfig {
 
     @Bean(name = "dataSource1")
 //    @Primary

@@ -18,7 +18,7 @@ public class TeacherService {
     TeacherMapper teacherMapper;
 
     public TeacherDisplayDto getTeacherById(@PathVariable long id){
-        return teacherMapper.teacherEntityToTeacherDisplayDto(teacherRepository.findTeacherById(id));
+           return teacherMapper.teacherEntityToTeacherDisplayDto(teacherRepository.findTeacherById(id));
     }
     public List<TeacherDisplayInfoDto> getAllTeachers(){
         List<TeacherDisplayInfoDto> teacherDisplayWithIdDtos = teacherMapper.teacherDisplayInfoDtosFromEntities(teacherRepository.findAll());
@@ -26,7 +26,7 @@ public class TeacherService {
     }
 
     public TeacherSubjectDisplayDto getTeacherWithSubjectsById(Long id) {
-        return teacherMapper.teacherEntityToTeacherSubjectDisplayDto(teacherRepository.findAllByTeacher(id));
+           return teacherMapper.teacherEntityToTeacherSubjectDisplayDto(teacherRepository.findAllByTeacher(id));
     }
 
     public TeacherEntity addTeacher(TeacherAdditionDto teacher){

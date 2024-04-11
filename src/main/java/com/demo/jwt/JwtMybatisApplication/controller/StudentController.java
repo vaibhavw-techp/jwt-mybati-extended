@@ -1,12 +1,10 @@
 package com.demo.jwt.JwtMybatisApplication.controller;
 
-import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayAsSubjects;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayByIdDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentsDisplayDto;
-import com.demo.jwt.JwtMybatisApplication.model.SubjectEntity;
+
+import com.demo.jwt.JwtMybatisApplication.dto.*;
 import com.demo.jwt.JwtMybatisApplication.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,34 +18,33 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping("/{id}")
-    public StudentDisplayByIdDto getStudentById(@PathVariable Long id){
-        return studentService.getStudentById(id);
-    }
-
-    @PostMapping("/{studentId}/subjects")
-    public void assignSubjectsToStudent(@PathVariable Long studentId, @RequestBody List<SubjectEntity> subjects) {
-        studentService.assignSubjectsToStudent(studentId, subjects);
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and #studentId == authentication.token.claims['assc_id'])")
+    public StudentDisplayByIdDto getStudentById(@PathVariable Long studentId) {
+       return studentService.getStudentById(studentId);
     }
 
     // Add student
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public StudentDisplayByIdDto addStudent(@RequestBody StudentAddDto student){
         return studentService.addStudent(student);
     }
 
     @GetMapping("/{studentId}/subjects")
-    public StudentDisplayAsSubjects getStudentWithSubjects(@PathVariable Long studentId) {
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and #studentId == authentication.token.claims['assc_id'])")
+    public StudentDisplaySubjectsDto getStudentWithSubjects(@PathVariable Long studentId) {
         return studentService.getStudentWithSubjects(studentId);
     }
 
     // Filter + ALL
     @GetMapping
-    public List<StudentsDisplayDto> getAllStudents(
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<StudentDisplayDto> getAllStudents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer age,
             @RequestParam(required = false) String email) {
 
-        List<StudentsDisplayDto> studentsDisplayDtos = studentService.getAllStudentsWithFilters(name, age, email);
+        List<StudentDisplayDto> studentsDisplayDtos = studentService.getAllStudentsWithFilters(name, age, email);
         return studentsDisplayDtos;
     }
 }

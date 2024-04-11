@@ -3,14 +3,18 @@ package com.demo.jwt.JwtMybatisApplication.service.mgservice;
 import com.demo.jwt.JwtMybatisApplication.dto.mgdto.MessAdditionDto;
 import com.demo.jwt.JwtMybatisApplication.dto.mgdto.MessDisplayDto;
 import com.demo.jwt.JwtMybatisApplication.dto.mgdto.MessOwnerDisplayInfoDto;
+import com.demo.jwt.JwtMybatisApplication.exceptions.UnauthorizedAccessException;
 import com.demo.jwt.JwtMybatisApplication.mapstruct.mgmapstruct.MessMapper;
 import com.demo.jwt.JwtMybatisApplication.model.mgmodel.MessEntity;
 import com.demo.jwt.JwtMybatisApplication.model.mgmodel.MessOwnerEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.mgrepository.MessOwnerRepository;
 import com.demo.jwt.JwtMybatisApplication.repository.mgrepository.MessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
