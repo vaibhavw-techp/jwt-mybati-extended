@@ -10,15 +10,16 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @MapperScan(value = "com.demo.jwt.JwtMybatisApplication",
         annotationClass= SchoolManagementSQLConnMapper.class,
         sqlSessionFactoryRef="sqlSessionFactory1")
 @Configuration
-public class MybatisDatasourceConfig {
+@EnableTransactionManagement
+public class SchoolDatasourceConfig {
 
     @Bean(name = "dataSource1")
 //    @Primary
@@ -54,4 +55,10 @@ public class MybatisDatasourceConfig {
     public DataSourceProperties firstDataSourceProperties() {
         return new DataSourceProperties();
     }
+
+    @Bean(name = "schoolManagement")
+    public DataSourceTransactionManager schoolDatabaseTransactionManager() {
+        return new DataSourceTransactionManager(dataSource1());
+    }
+
 }

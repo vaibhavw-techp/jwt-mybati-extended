@@ -1,19 +1,20 @@
 package com.demo.jwt.JwtMybatisApplication.service;
 
-import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayAsSubjects;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayByIdDto;
-import com.demo.jwt.JwtMybatisApplication.dto.StudentsDisplayDto;
+
+import com.demo.jwt.JwtMybatisApplication.dto.*;
+import com.demo.jwt.JwtMybatisApplication.exceptions.DuplicateResourceException;
+import com.demo.jwt.JwtMybatisApplication.exceptions.ResourceNotFoundException;
 import com.demo.jwt.JwtMybatisApplication.mapstruct.StudentMapper;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import com.demo.jwt.JwtMybatisApplication.model.SubjectEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
+import com.demo.jwt.JwtMybatisApplication.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -23,13 +24,13 @@ public class StudentService {
     @Autowired
     private StudentMapper studentMapper;
 
-    public StudentDisplayByIdDto getStudentById(Long id){
-        StudentEntity studentEntity = studentRepository.findStudentById(id);
-        return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
-    }
+    @Autowired
+    private SubjectRepository subjectRepository;
 
-    public void assignSubjectsToStudent(Long studentId, List<SubjectEntity> subjects) {
-        studentRepository.saveAllSubjectsForStudent(studentId, subjects);
+    public StudentDisplayByIdDto getStudentById(Long id) {
+        StudentEntity studentEntity = studentRepository.findStudentById(id);
+        if(studentEntity == null) throw new ResourceNotFoundException(id, "Student");
+        return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
     public StudentDisplayByIdDto addStudent(StudentAddDto student){
@@ -38,12 +39,12 @@ public class StudentService {
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
-    public StudentDisplayAsSubjects getStudentWithSubjects(Long studentId) {
+    public StudentDisplaySubjectsDto getStudentWithSubjects(Long studentId) {
         StudentEntity studentEntity = studentRepository.findBySubjects(studentId);
         return studentMapper.studentEntityToDisplayAsSubjects(studentEntity);
     }
 
-    public List<StudentsDisplayDto> getAllStudentsWithFilters(String name, Integer age, String email) {
+    public List<StudentDisplayDto> getAllStudentsWithFilters(String name, Integer age, String email) {
         Map<String, Object> filters = new HashMap<>();
         filters.put("name", name);
         filters.put("age", age);
@@ -51,4 +52,41 @@ public class StudentService {
         List<StudentEntity> studentEntities = studentRepository.findAll(filters);
         return studentMapper.studentEntitiesToDisplayDtos(studentEntities);
     }
+
+    public void assignSubjectToStudent(Long studentId, Long subjectId) {
+        // Get assigned subject IDs
+        List<Long> assignedSubjectIds = studentRepository.findSubjectsByStudentId(studentId)
+                .stream()
+                .map(SubjectEntity::getId)
+                .collect(Collectors.toList());
+
+        // Check if the subject is already assigned
+        if (assignedSubjectIds.contains(subjectId)) {
+            throw new DuplicateResourceException("Subject");
+        }
+        List<Long> subjectIds = Collections.singletonList(subjectId);
+        // Update the subject to the student
+        studentRepository.updateSubjectsToStudent(studentId, subjectIds);
+    }
+
+    @Transactional(transactionManager = "schoolManagement")
+    public List<StudentDisplaySubjectsDto> assignSubjectSToStudentsByName(SubjectAssignDto subjectAssignDtos) {
+
+        List<StudentEntity> students = studentRepository.findAllStudents();
+
+        for(String subject: subjectAssignDtos.getSubjects()) {
+            Long subjectId = subjectRepository.findSubjectIdByName(subject);
+
+            // Checked Exception Handling for Subject Exist and not exists
+            if(subjectId == null) throw new ResourceNotFoundException("Subject");
+
+            for(StudentEntity student: students) {
+                assignSubjectToStudent(student.getId(), subjectId);
+            }
+        }
+
+        List<StudentDisplaySubjectsDto> retStudents = studentMapper.mapStudentEntitiesToStudentDisplayWithSubjects(studentRepository.findAllStudents());
+        return retStudents;
+    }
 }
+

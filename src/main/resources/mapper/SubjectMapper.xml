@@ -19,6 +19,13 @@
         SELECT * FROM subject
     </select>
 
+    <!-- Select subject IDs by subject names -->
+    <select id="findSubjectIdByName" parameterType="String" resultType="long">
+        SELECT id
+        FROM subject
+        WHERE name = #{subjectName}
+    </select>
+
     <!-- Insert Subject -->
     <insert id="saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         <foreach collection="list" item="subject" separator=";">

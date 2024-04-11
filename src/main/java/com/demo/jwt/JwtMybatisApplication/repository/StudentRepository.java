@@ -16,7 +16,10 @@ public interface StudentRepository {
 
     void save(StudentEntity student);
     void saveAllSubjectsForStudent(@Param("studentId") Long studentId, @Param("subjects") List<SubjectEntity> subjects);
+    void updateSubjectsToStudent(@Param("studentId") Long studentId, @Param("subjectIds") List<Long> subjectIds);
     StudentEntity findStudentById(Long id);
     StudentEntity findBySubjects(Long id);
     List<StudentEntity> findAll(Map<String, Object> filters);
+    List<SubjectEntity> findSubjectsByStudentId(Long id);
+    List<StudentEntity> findAllStudents();
 }
