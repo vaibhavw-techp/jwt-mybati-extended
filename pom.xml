@@ -92,6 +92,29 @@
             <version>2.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.7.0</version>
+        </dependency>
+
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.giffing.bucket4j.spring.boot.starter/bucket4j-spring-boot-starter-context &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.giffing.bucket4j.spring.boot.starter</groupId>-->
+<!--            <artifactId>bucket4j-spring-boot-starter-context</artifactId>-->
+<!--            <version>0.9.0</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.giffing.bucket4j.spring.boot.starter</groupId>
+            <artifactId>bucket4j-spring-boot-starter-context</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

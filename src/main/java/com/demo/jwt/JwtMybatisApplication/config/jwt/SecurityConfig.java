@@ -3,6 +3,8 @@ package com.demo.jwt.JwtMybatisApplication.config.jwt;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Refill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +18,10 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +34,8 @@ public class SecurityConfig {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     private JwtAccessDeniedHandler accessDeniedHandler;
+    @Autowired
+    private RateLimitFilter rateLimitFilter;
 
     private static final String[] AUTH_WHITE_LIST = {
             "/v3/api-docs/**",
@@ -38,6 +44,8 @@ public class SecurityConfig {
             "/swagger-resources/**"
     };
 
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests(authorize ->
@@ -45,6 +53,7 @@ public class SecurityConfig {
                     .requestMatchers(AUTH_WHITE_LIST).permitAll()
                     .anyRequest().authenticated()
             )
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2ResourceServer(configure -> configure.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                     .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .exceptionHandling(exceptionHandling ->
