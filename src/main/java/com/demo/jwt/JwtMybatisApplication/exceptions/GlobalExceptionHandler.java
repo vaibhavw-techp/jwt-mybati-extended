@@ -30,4 +30,10 @@ public class GlobalExceptionHandler {
         return new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
     }
 
+    @ExceptionHandler(ManyRequestsException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorDetails handlerTooManyRequestsException(ManyRequestsException ex, WebRequest request) {
+        return new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+    }
+
 }

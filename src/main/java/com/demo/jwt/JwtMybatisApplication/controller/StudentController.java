@@ -3,21 +3,23 @@ package com.demo.jwt.JwtMybatisApplication.controller;
 
 //import com.demo.jwt.JwtMybatisApplication.config.jwt.JwtTokenExtractor;
 //import com.demo.jwt.JwtMybatisApplication.config.jwt.RateLimiterService;
-import com.demo.jwt.JwtMybatisApplication.config.jwt.BypassRateLimit;
+import com.demo.jwt.JwtMybatisApplication.exceptions.ManyRequestsException;
+import com.demo.jwt.JwtMybatisApplication.ratelimit.PricingPlan;
+import com.demo.jwt.JwtMybatisApplication.ratelimit.RateLimitingService;
 import com.demo.jwt.JwtMybatisApplication.dto.*;
 import com.demo.jwt.JwtMybatisApplication.service.StudentService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.ConsumptionProbe;
 import io.github.bucket4j.Refill;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -28,6 +30,9 @@ public class StudentController {
     private StudentService studentService;
 
     private final Bucket bucket;
+
+    @Autowired
+    private RateLimitingService rateLimitingService;
 
     public StudentController(Bucket bucket) {
         this.bucket = bucket;
@@ -43,11 +48,9 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and #studentId == authentication.token.claims['assc_id'])")
-    public StudentDisplayByIdDto getStudentById(@PathVariable Long studentId) {
-        // Check rate limit before processing the request
-        return studentService.getStudentById(studentId);
+    public StudentDisplayByIdDto getStudentById(@PathVariable Long studentId, Principal principal) {
+        return studentService.getStudentById(studentId, principal);
     }
-
 
     // Add student
     @PostMapping
@@ -64,25 +67,29 @@ public class StudentController {
 
     // Filter + ALL
     @GetMapping
-    @BypassRateLimit
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STUDENT')")
     public List<StudentDisplayDto> getAllStudents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer age,
-            @RequestParam(required = false) String email) {
+            @RequestParam(required = false) String email, Principal principal) {
 
-        // Check rate limit before processing the request
-        ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
-        if (probe.isConsumed()) {
-            // Request allowed, proceed with processing
-            List<StudentDisplayDto> studentsDisplayDtos = studentService.getAllStudentsWithFilters(name, age, email);
-            return studentsDisplayDtos;
-        } else {
-            // Request denied due to rate limit exceeded
-            throw new RuntimeException("API request limit has been exhausted.");
+
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        Jwt jwt = jwtAuthenticationToken.getToken();
+        String username = principal.getName();
+        String plan = (String) jwt.getClaims().get("plan");
+
+        try {
+            if (rateLimitingService.tryConsume(username, plan)) {
+                return studentService.getAllStudentsWithFilters(name,age,email);
+            } else {
+                throw new ManyRequestsException();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while processing rate limiting: " + e.getMessage());
         }
 
-//        List<StudentDisplayDto> studentsDisplayDtos = studentService.getAllStudentsWithFilters(name, age, email);
-//        return studentsDisplayDtos;
     }
+
+
 }

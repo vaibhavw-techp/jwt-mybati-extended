@@ -1,15 +1,20 @@
 package com.demo.jwt.JwtMybatisApplication.service;
 
 
+import com.demo.jwt.JwtMybatisApplication.exceptions.ManyRequestsException;
+import com.demo.jwt.JwtMybatisApplication.ratelimit.RateLimitingService;
 import com.demo.jwt.JwtMybatisApplication.dto.*;
 import com.demo.jwt.JwtMybatisApplication.exceptions.ResourceNotFoundException;
 import com.demo.jwt.JwtMybatisApplication.mapstruct.StudentMapper;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 
+import java.security.Principal;
 import java.util.*;
 
 
@@ -21,11 +26,28 @@ public class StudentService {
     @Autowired
     private StudentMapper studentMapper;
 
+    @Autowired
+    private RateLimitingService rateLimitingService;
 
-    public StudentDisplayByIdDto getStudentById(Long id) {
+
+    public StudentDisplayByIdDto getStudentById(Long id, Principal principal) {
         StudentEntity studentEntity = studentRepository.findStudentById(id);
         if(studentEntity == null) throw new ResourceNotFoundException(id, "Student");
-        return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
+
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+        Jwt jwt = jwtAuthenticationToken.getToken();
+        String username = principal.getName();
+        String plan = (String) jwt.getClaims().get("plan");
+
+        try {
+            if (rateLimitingService.tryConsume(username, plan)) {
+                return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
+            } else {
+                throw new ManyRequestsException();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while processing rate limiting: " + e.getMessage());
+        }
     }
 
     public StudentDisplayByIdDto addStudent(StudentAddDto student){

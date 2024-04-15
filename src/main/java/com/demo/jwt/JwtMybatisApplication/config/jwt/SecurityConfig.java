@@ -34,8 +34,6 @@ public class SecurityConfig {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     private JwtAccessDeniedHandler accessDeniedHandler;
-    @Autowired
-    private RateLimitFilter rateLimitFilter;
 
     private static final String[] AUTH_WHITE_LIST = {
             "/v3/api-docs/**",
@@ -44,16 +42,14 @@ public class SecurityConfig {
             "/swagger-resources/**"
     };
 
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests(authorize ->
                 authorize
                     .requestMatchers(AUTH_WHITE_LIST).permitAll()
+                        .requestMatchers("/hello/**").permitAll()
                     .anyRequest().authenticated()
             )
-                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2ResourceServer(configure -> configure.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                     .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .exceptionHandling(exceptionHandling ->
