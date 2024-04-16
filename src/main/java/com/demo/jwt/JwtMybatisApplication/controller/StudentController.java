@@ -1,16 +1,10 @@
 package com.demo.jwt.JwtMybatisApplication.controller;
 
 
-//import com.demo.jwt.JwtMybatisApplication.config.jwt.JwtTokenExtractor;
-//import com.demo.jwt.JwtMybatisApplication.config.jwt.RateLimiterService;
 import com.demo.jwt.JwtMybatisApplication.exceptions.ManyRequestsException;
-import com.demo.jwt.JwtMybatisApplication.ratelimit.PricingPlan;
 import com.demo.jwt.JwtMybatisApplication.ratelimit.RateLimitingService;
 import com.demo.jwt.JwtMybatisApplication.dto.*;
 import com.demo.jwt.JwtMybatisApplication.service.StudentService;
-import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,7 +12,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.Duration;
 import java.util.List;
 
 
@@ -29,22 +22,8 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    private final Bucket bucket;
-
     @Autowired
     private RateLimitingService rateLimitingService;
-
-    public StudentController(Bucket bucket) {
-        this.bucket = bucket;
-    }
-
-    public StudentController() {
-        Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
-        this.bucket = Bucket.builder()
-                .addLimit(limit)
-                .build();
-    }
-
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and #studentId == authentication.token.claims['assc_id'])")
