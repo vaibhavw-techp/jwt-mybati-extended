@@ -3,10 +3,10 @@ package com.demo.jwt.JwtMybatisApplication.config.jwt;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,7 +17,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 import javax.crypto.SecretKey;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,10 +28,6 @@ public class SecurityConfig {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Autowired
-    private JwtAccessDeniedHandler accessDeniedHandler;
 
     private static final String[] AUTH_WHITE_LIST = {
             "/v3/api-docs/**",
@@ -45,12 +43,7 @@ public class SecurityConfig {
                     .requestMatchers(AUTH_WHITE_LIST).permitAll()
                     .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(configure -> configure.jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                    .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .accessDeniedHandler(accessDeniedHandler)
-                )
+            .oauth2ResourceServer(configure -> configure.jwt(Customizer.withDefaults()))
             .build();
     }
 
@@ -75,5 +68,6 @@ public class SecurityConfig {
                 .build()
                 .toSecretKey();
     }
+
 
 }
