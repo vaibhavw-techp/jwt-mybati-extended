@@ -8,7 +8,6 @@ import lombok.NonNull;
 
 @Data
 public class StudentAddDto {
-    private Long id;
     @NotNull
     private String name;
     @Email

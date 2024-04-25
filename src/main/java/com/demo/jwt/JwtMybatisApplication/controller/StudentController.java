@@ -27,7 +27,7 @@ public class StudentController {
     // Add student
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public StudentDisplayByIdDto addStudent(@Valid @RequestBody StudentAddDto student){
+    public StudentDisplayDto addStudent(@Valid @RequestBody StudentAddDto student){
         return studentService.addStudent(student);
     }
 

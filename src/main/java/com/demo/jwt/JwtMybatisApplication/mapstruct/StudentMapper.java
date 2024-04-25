@@ -13,7 +13,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = SubjectMapper.class)
 public interface StudentMapper {
 
-    @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
@@ -28,6 +27,11 @@ public interface StudentMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
     StudentDisplayByIdDto studentEntityToDisplayByIdDto(StudentEntity entity);
+
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "age", target = "age")
+    StudentDisplayDto mapStudentEntityToStudentDisplayDto(StudentEntity student);
 
     List<StudentDisplayDto> studentEntitiesToDisplayDtos(List<StudentEntity> entities);
 }
