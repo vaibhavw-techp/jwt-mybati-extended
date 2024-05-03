@@ -7,6 +7,7 @@ import com.demo.jwt.JwtMybatisApplication.mapstruct.StudentMapper;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 
@@ -28,10 +29,11 @@ public class StudentService {
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
-    public StudentDisplayByIdDto addStudent(StudentAddDto student){
+    @KafkaListener(topics = "student", groupId = "group-1", containerFactory = "studentListener")
+    public StudentDisplayDto addStudent(StudentAddDto student){
         StudentEntity studentEntity = studentMapper.studentAddDtoToEntity(student);
         studentRepository.save(studentEntity);
-        return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
+        return studentMapper.mapStudentEntityToStudentDisplayDto(studentEntity);
     }
 
     public StudentDisplaySubjectsDto getStudentWithSubjects(Long id) {

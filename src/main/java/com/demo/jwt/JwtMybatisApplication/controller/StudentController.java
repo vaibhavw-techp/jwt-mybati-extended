@@ -3,6 +3,7 @@ package com.demo.jwt.JwtMybatisApplication.controller;
 
 import com.demo.jwt.JwtMybatisApplication.dto.*;
 import com.demo.jwt.JwtMybatisApplication.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StudentController {
     // Add student
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public StudentDisplayByIdDto addStudent(@RequestBody StudentAddDto student){
+    public StudentDisplayDto addStudent(@Valid @RequestBody StudentAddDto student){
         return studentService.addStudent(student);
     }
 
