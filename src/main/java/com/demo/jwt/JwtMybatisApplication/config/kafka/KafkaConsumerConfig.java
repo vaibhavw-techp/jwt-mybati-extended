@@ -34,7 +34,6 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(),
                 new JsonDeserializer<>(StudentAddDto.class, false));
     }
-
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, StudentAddDto> studentListener() {
         ConcurrentKafkaListenerContainerFactory<String, StudentAddDto> factory = new ConcurrentKafkaListenerContainerFactory<>();

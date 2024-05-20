@@ -24,12 +24,6 @@ public class StudentController {
        return studentService.getStudentById(studentId);
     }
 
-    // Add student
-    @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public StudentDisplayDto addStudent(@Valid @RequestBody StudentAddDto student){
-        return studentService.addStudent(student);
-    }
 
     @GetMapping("/{studentId}/subjects")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and #studentId == authentication.token.claims['assc_id'])")
