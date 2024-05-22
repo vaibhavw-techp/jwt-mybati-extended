@@ -7,11 +7,12 @@ import com.demo.jwt.JwtMybatisApplication.mapstruct.StudentMapper;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import com.demo.jwt.JwtMybatisApplication.model.log.LogEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
-import jakarta.validation.ValidationException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 
@@ -41,20 +42,19 @@ public class StudentService {
     }
 
     @KafkaListener(topics = "student", groupId = "group-1", containerFactory = "studentListener")
-    public void addStudent(StudentAddDto student) {
+    public void addStudent(@Valid StudentAddDto student, Acknowledgment ack) {
         try {
             System.out.println(student);
             StudentEntity studentEntity = studentMapper.studentAddDtoToEntity(student);
             studentRepository.save(studentEntity);
-            handleException(student, 200, "Student added successfully");
-        } catch (ValidationException ex) {
-            handleException(student, 400, ex.getMessage());
+            handleLog(student, 200, "Student added successfully");
+            ack.acknowledge();
         } catch (Exception ex) {
-            handleException(student, 500, "An unexpected exception occurred: " + ex.getMessage());
+            handleLog(student, 500, "An unexpected exception occurred: " + ex.getMessage());
         }
     }
 
-    private void handleException(StudentAddDto student, int statusCode, String statusMessage) {
+    private void handleLog(StudentAddDto student, int statusCode, String statusMessage) {
         LogEntity logEntity = new LogEntity(student.getName(),student.getEmail(),statusCode,LocalDateTime.now(),statusMessage,"Consumer");
         kafkaTemplate.send(LOG_TOPIC, logEntity);
     }
