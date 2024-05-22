@@ -1,6 +1,7 @@
 package com.demo.jwt.JwtMybatisApplication.config.kafka;
 
 import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
+import com.demo.jwt.JwtMybatisApplication.dto.log.StudentEventLogDto;
 import jakarta.validation.Valid;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -27,16 +28,16 @@ public class KafkaConsumerConfig {
     private String GROUP_ID;
 
     @Bean
-    public ConsumerFactory<String, StudentAddDto> consumerFactory() {
+    public ConsumerFactory<String, StudentEventLogDto> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
         return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(),
-                new JsonDeserializer<>(StudentAddDto.class, false));
+                new JsonDeserializer<>(StudentEventLogDto.class, false));
     }
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, StudentAddDto> studentListener() {
-        ConcurrentKafkaListenerContainerFactory<String, StudentAddDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, StudentEventLogDto> studentListener() {
+        ConcurrentKafkaListenerContainerFactory<String, StudentEventLogDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

@@ -4,6 +4,7 @@ import com.demo.jwt.JwtMybatisApplication.dto.StudentAddDto;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayByIdDto;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplayDto;
 import com.demo.jwt.JwtMybatisApplication.dto.StudentDisplaySubjectsDto;
+import com.demo.jwt.JwtMybatisApplication.dto.log.StudentEventLogDto;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +17,8 @@ public interface StudentMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "age", target = "age")
-    StudentEntity studentAddDtoToEntity(StudentAddDto dto);
+    @Mapping(target = "id", ignore = true)
+    StudentEntity mapStudentEventLogDtoToStudentEntity(StudentEventLogDto studentEventLogDto);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "subjects", target = "subjects")

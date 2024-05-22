@@ -10,12 +10,9 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LogEntity {
+public class AckEntity {
+    private Long logId;
     private String name;
-    private String email;
-    private int statusCode;
-    private LocalDateTime timestamp;
-    private String statusMessage;
-    private String source;
+    private String currentState;
 }
 
