@@ -14,6 +14,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.scheduling.config.FixedDelayTask;
 import org.springframework.stereotype.Service;
 
 
@@ -45,13 +46,13 @@ public class StudentService {
 
     @RetryableTopic(
             attempts = "10",
-            backoff = @Backoff(delay = 5000)
+            backoff = @Backoff(delay = 1000, multiplier = 2, maxDelay = 20000)
     )
     @KafkaListener(topics = "student", groupId = "group-1", containerFactory = "studentListener")
     public void addStudent(StudentEventLogDto student) {
 
         if(student.getAge() < 20) {
-            throw new RuntimeException("Exception Occured Bro!!");
+            throw new RuntimeException("Exception Occured while processing!!");
         }
 
         try {
