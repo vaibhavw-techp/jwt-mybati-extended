@@ -8,10 +8,17 @@ import com.demo.jwt.JwtMybatisApplication.exceptions.ResourceNotFoundException;
 import com.demo.jwt.JwtMybatisApplication.mapstruct.StudentMapper;
 import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
+import lombok.extern.java.Log;
+import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
 
 
@@ -32,6 +39,7 @@ public class StudentService {
     @Value("${topic.log}")
     private String LOG_TOPIC;
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public StudentDisplayByIdDto getStudentById(Long id) {
         StudentEntity studentEntity = studentRepository.findStudentById(id);
@@ -39,8 +47,12 @@ public class StudentService {
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
+    @RetryableTopic(
+            attempts = "4",
+            backoff = @Backoff(delay = 1000, multiplier = 2, maxDelay = 2000)
+    )
     @KafkaListener(topics = "student", groupId = "group-1", containerFactory = "studentListener")
-    public void addStudent(StudentEventLogDto student) {
+    public void addStudentAndSendAckToProducer(StudentEventLogDto student) {
         try {
             System.out.println(student);
             StudentEntity studentEntity = studentMapper.mapStudentEventLogDtoToStudentEntity(student);
@@ -54,6 +66,11 @@ public class StudentService {
     private void handleException(StudentEventLogDto student, String currentState) {
         AckDto ackDto = new AckDto(student.getLogId(), student.getName(), currentState);
         kafkaTemplate.send(LOG_TOPIC, ackDto);
+    }
+
+    @DltHandler
+    private void listenDLTForStudentAddition(StudentEventLogDto student) {
+        logger.info(String.valueOf(student));
     }
 
     public StudentDisplaySubjectsDto getStudentWithSubjects(Long id) {
