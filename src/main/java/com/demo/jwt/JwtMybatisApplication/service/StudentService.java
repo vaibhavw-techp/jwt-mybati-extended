@@ -8,6 +8,7 @@ import com.demo.jwt.JwtMybatisApplication.model.StudentEntity;
 import com.demo.jwt.JwtMybatisApplication.model.log.LogEntity;
 import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
 import jakarta.validation.Valid;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;

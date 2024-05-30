@@ -1,35 +1,39 @@
 package com.demo.jwt.JwtMybatisApplication.service;
 
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TestService {
 
-
     @Autowired
     private ApplicationContext applicationContext;
 
-    @KafkaListener(topics = "temp-topic", groupId = "consumer-group-1")
-    public String receiveData(String message) {
-        String theySay = "HELLO-2";
-        String quoted = "\"" + theySay + "\"";
-        if(message.equals(quoted)) {
-            System.out.println(message);
-            shutDownApplication();
-            throw new RuntimeException("HEY");
-        }
-
-        System.out.println(message);
+    public final String topicHai = "temp-topic";
 
 
-        return "SUCCESS";
-    }
+//    @KafkaListener(topics = "temp-topic", groupId = "consumer_group_1")
+//    public String receiveData(String message) throws Exception {
+//        String temp = "HELLO-2";
+//        String quoted = "\"" + temp + "\"";
+//        if(message.equals(quoted)) {
+//            System.out.println("HIII");
+//            x++;
+//            throw new Exception("HEY");
+//        }
+//        System.out.println(message);
+//        System.out.println(x);
+//
+//        return "SUCCESS";
+//    }
 
     private void shutDownApplication() {
         SpringApplication.exit(applicationContext, new ExitCodeGenerator() {
@@ -40,6 +44,39 @@ public class TestService {
             }
         });
     }
+
+    @RetryableTopic(attempts = "3", dltTopicSuffix = ".my-own-dlt")
+    @KafkaListener(topics = "temp-topic", groupId = "consumer_group_1", containerFactory = "studentListener")
+    public void receiveData1(ConsumerRecord<String, String> record) throws InterruptedException {
+        String message = record.value();
+        long offset = record.offset();
+        int partition = record.partition();
+        String topic = record.topic();
+
+        System.out.println("Received message: " + message);
+        System.out.println("From topic: " + topic + ", partition: " + partition + ", offset: " + offset);
+
+        if(message.equals("2")) {
+            throw new RuntimeException("Exception Aa gya");
+        }
+
+        System.out.println("Processing message again: " + message);
+        System.out.println("From topic: " + topic + ", partition: " + partition + ", offset: " + offset);
+    }
+
+//    @KafkaListener(topics = "temp-topic", groupId = "consumer_group_1", containerFactory = "studentListener")
+//    public void receiveData2(String message) {
+//
+//        if(message.equals("5")) {
+//            System.out.println("Hello-2");
+////            ack.acknowledge();
+//              throw new RuntimeException("Ha Ha Ha");
+//        }
+//        System.out.println(message + " Consumer-Group-2");
+////        ack.acknowledge();
+//    }
+
+
 
 //    @KafkaListener(topics = "temp-topic", groupId = "consumer-group-1")
 //    public String receiveData1(String message) {
