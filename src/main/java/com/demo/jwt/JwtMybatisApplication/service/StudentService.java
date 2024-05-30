@@ -11,7 +11,9 @@ import com.demo.jwt.JwtMybatisApplication.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
 
 
@@ -39,9 +41,21 @@ public class StudentService {
         return studentMapper.studentEntityToDisplayByIdDto(studentEntity);
     }
 
+    private int x = 0;
+
+    @RetryableTopic(
+            attempts = "10",
+            backoff = @Backoff(delay = 5000)
+    )
     @KafkaListener(topics = "student", groupId = "group-1", containerFactory = "studentListener")
     public void addStudent(StudentEventLogDto student) {
+
+        if(student.getAge() < 20) {
+            throw new RuntimeException("Exception Occured Bro!!");
+        }
+
         try {
+            System.out.println(x);
             System.out.println(student);
             StudentEntity studentEntity = studentMapper.mapStudentEventLogDtoToStudentEntity(student);
             studentRepository.save(studentEntity);
