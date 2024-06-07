@@ -1,15 +1,25 @@
 package com.demo.jwt.JwtMybatisApplication.service;
 
 
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TestService {
@@ -46,7 +56,7 @@ public class TestService {
     }
 
     @RetryableTopic(attempts = "3", dltTopicSuffix = ".my-own-dlt")
-    @KafkaListener(topics = "temp-topic", groupId = "consumer_group_1", containerFactory = "studentListener")
+//    @KafkaListener(topics = "temp-topic", groupId = "consumer_group_1", containerFactory = "studentListener")
     public void receiveData1(ConsumerRecord<String, String> record) throws InterruptedException {
         String message = record.value();
         long offset = record.offset();
@@ -56,13 +66,15 @@ public class TestService {
         System.out.println("Received message: " + message);
         System.out.println("From topic: " + topic + ", partition: " + partition + ", offset: " + offset);
 
-        if(message.equals("2")) {
-            throw new RuntimeException("Exception Aa gya");
-        }
+//        if(message.equals("5")) {
+//            TimeUnit.MILLISECONDS.sleep(5000);
+//            System.out.println("\n\n 5 Seconds has been Elapsed!!\n\n\n");
+//        }
 
         System.out.println("Processing message again: " + message);
         System.out.println("From topic: " + topic + ", partition: " + partition + ", offset: " + offset);
     }
+
 
 //    @KafkaListener(topics = "temp-topic", groupId = "consumer_group_1", containerFactory = "studentListener")
 //    public void receiveData2(String message) {
